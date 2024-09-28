@@ -1,7 +1,7 @@
 openapi: 3.0.3
 
 info:
-    title: Novabook Tax Service
+    title: Tax Service
     version: 1.0.0
 
 paths:
@@ -137,6 +137,7 @@ components:
                     example: '3419027d-960f-4e8f-b8b7-f7b2b4791824'
                 items:
                     type: array
+                    minItems: 1
                     items:
                         $ref: '#/components/schemas/SaleItem'
         SaleItem:

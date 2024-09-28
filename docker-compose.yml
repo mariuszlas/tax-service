@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+    postgres:
+        image: postgres:15
+        container_name: tax-service-db
+        environment:
+            POSTGRES_DB: test_db
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        ports:
+            - '5432:5432'
+        volumes:
+            - tax-service-db:/var/lib/postgresql/data
+
+volumes:
+    tax-service-db:

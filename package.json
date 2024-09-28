@@ -12,7 +12,9 @@
         "format:write": "prettier --write .",
         "lint:check": "eslint .",
         "lint:fix": "eslint --fix .",
-        "prepare": "husky"
+        "prepare": "husky",
+        "generate-migration": "npx drizzle-kit generate",
+        "migrate": "npx drizzle-kit migrate"
     },
     "author": "Mariusz Las",
     "license": "MIT",
@@ -20,8 +22,13 @@
     "dependencies": {
         "@types/yamljs": "^0.2.34",
         "body-parser": "^1.20.3",
+        "decimal.js": "^10.4.3",
+        "dotenv": "^16.4.5",
+        "drizzle-kit": "^0.24.2",
+        "drizzle-orm": "^0.33.0",
         "express": "^4.21.0",
         "express-openapi-validator": "^5.3.7",
+        "pg": "^8.13.0",
         "swagger-ui-express": "^5.0.1",
         "ts-node": "^10.9.2",
         "typescript": "^5.6.2",
@@ -31,6 +38,7 @@
         "@types/express": "^5.0.0",
         "@types/jest": "^29.5.13",
         "@types/node": "^22.7.4",
+        "@types/pg": "^8.11.10",
         "@types/swagger-ui-express": "^4.1.6",
         "@typescript-eslint/eslint-plugin": "^8.7.0",
         "eslint": "^9.11.1",
@@ -49,5 +57,8 @@
         "*.{js,ts}": [
             "eslint --fix ."
         ]
+    },
+    "engines": {
+        "node": ">=20"
     }
 }

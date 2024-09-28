@@ -1,0 +1,240 @@
+{
+    "id": "ad37c8d1-53cb-4673-8657-671dcb47ff5a",
+    "prevId": "00000000-0000-0000-0000-000000000000",
+    "version": "7",
+    "dialect": "postgresql",
+    "tables": {
+        "public.sale_amendments": {
+            "name": "sale_amendments",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "serial",
+                    "primaryKey": true,
+                    "notNull": true
+                },
+                "invoice_id": {
+                    "name": "invoice_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "item_id": {
+                    "name": "item_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "amended_cost": {
+                    "name": "amended_cost",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "amended_tax_rate": {
+                    "name": "amended_tax_rate",
+                    "type": "numeric",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "amendment_date": {
+                    "name": "amendment_date",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {}
+        },
+        "public.sale_events": {
+            "name": "sale_events",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "serial",
+                    "primaryKey": true,
+                    "notNull": true
+                },
+                "invoice_id": {
+                    "name": "invoice_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "event_date": {
+                    "name": "event_date",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {
+                "invoice_id_idx": {
+                    "name": "invoice_id_idx",
+                    "columns": [
+                        {
+                            "expression": "invoice_id",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": true,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {
+                "sale_events_invoice_id_unique": {
+                    "name": "sale_events_invoice_id_unique",
+                    "nullsNotDistinct": false,
+                    "columns": ["invoice_id"]
+                }
+            }
+        },
+        "public.sale_items": {
+            "name": "sale_items",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "serial",
+                    "primaryKey": true,
+                    "notNull": true
+                },
+                "sale_event_id": {
+                    "name": "sale_event_id",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "item_id": {
+                    "name": "item_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "cost": {
+                    "name": "cost",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "tax_rate": {
+                    "name": "tax_rate",
+                    "type": "numeric",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {
+                "sales_id_item_id_idx": {
+                    "name": "sales_id_item_id_idx",
+                    "columns": [
+                        {
+                            "expression": "sale_event_id",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        },
+                        {
+                            "expression": "item_id",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": true,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {
+                "sale_items_sale_event_id_sale_events_id_fk": {
+                    "name": "sale_items_sale_event_id_sale_events_id_fk",
+                    "tableFrom": "sale_items",
+                    "tableTo": "sale_events",
+                    "columnsFrom": ["sale_event_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {}
+        },
+        "public.tax_payment_events": {
+            "name": "tax_payment_events",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "serial",
+                    "primaryKey": true,
+                    "notNull": true
+                },
+                "event_date": {
+                    "name": "event_date",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "amount": {
+                    "name": "amount",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {}
+        }
+    },
+    "enums": {},
+    "schemas": {},
+    "sequences": {},
+    "_meta": {
+        "columns": {},
+        "schemas": {},
+        "tables": {}
+    }
+}
