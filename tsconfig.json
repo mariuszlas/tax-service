@@ -1,0 +1,22 @@
+{
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules"],
+    "compilerOptions": {
+        "lib": ["ES2023"],
+        "allowJs": true,
+        "strict": true,
+        "module": "commonjs",
+        "outDir": "./dist",
+        "noImplicitAny": false,
+        "sourceMap": false,
+        "target": "ES2022",
+        "composite": false,
+        "declaration": false,
+        "declarationMap": false,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "noFallthroughCasesInSwitch": true,
+        "forceConsistentCasingInFileNames": true
+    }
+}

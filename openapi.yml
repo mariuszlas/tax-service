@@ -1,0 +1,227 @@
+openapi: 3.0.3
+
+info:
+    title: Novabook Tax Service
+    version: 1.0.0
+
+paths:
+    /health:
+        get:
+            summary: Health check
+            description: Endpoint for checking health of the service
+            tags:
+                - Health Controller
+            operationId: health
+            x-eov-operation-handler: health
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: OK
+                default:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+    /transactions:
+        post:
+            summary: Add Sales or Tax Event
+            description: Allows to send sales and tax payment transactions
+            tags:
+                - Transactions Controller
+            operationId: transactions
+            x-eov-operation-handler: transactions
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            oneOf:
+                                - $ref: '#/components/schemas/TaxTransaction'
+                                - $ref: '#/components/schemas/SaleTransaction'
+            responses:
+                '202':
+                    description: Transaction accepted
+                default:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+    /tax-position:
+        get:
+            summary: Query Tax Position
+            description: Allows to get the tax position at any given point in time. Calculated from ingested events and any further amendments
+            tags:
+                - Transactions Controller
+            operationId: taxPosition
+            x-eov-operation-handler: taxPosition
+            parameters:
+                - name: date
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                      format: date-time
+                      example: '2024-02-22T17:29:39Z'
+                      description: Date and time in ISO 8601 format
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TaxPosition'
+                default:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+    /sale:
+        patch:
+            summary: Amend Sale
+            description: Allows to modify an item within a sale at a specific point in time. Accepts all amendments even if the sale or item does not yet exist
+            tags:
+                - Transactions Controller
+            operationId: sale
+            x-eov-operation-handler: sale
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SaleItem'
+            responses:
+                '202':
+                    description: Sale updated
+                default:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+components:
+    schemas:
+        SaleTransaction:
+            required:
+                - eventType
+                - date
+                - invoiceId
+                - items
+            properties:
+                eventType:
+                    type: string
+                    example: SALES
+                    enum:
+                        - SALES
+                        - TAX_PAYMENT
+                date:
+                    type: string
+                    format: date-time
+                    description: Date and time in ISO 8601 format
+                    example: '2024-02-22T17:29:39Z'
+                invoiceId:
+                    type: string
+                    example: '3419027d-960f-4e8f-b8b7-f7b2b4791824'
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SaleItem'
+        SaleItem:
+            required:
+                - itemId
+                - cost
+                - taxRate
+            properties:
+                itemId:
+                    type: string
+                    example: '02db47b6-fe68-4005-a827-24c6e962f3df'
+                cost:
+                    type: integer
+                    example: 2900
+                    description: Amount in pennies
+                taxRate:
+                    type: number
+                    format: double
+                    example: 19.99
+        TaxTransaction:
+            required:
+                - eventType
+                - date
+                - amount
+            properties:
+                eventType:
+                    type: string
+                    example: TAX_PAYMENT
+                    enum:
+                        - SALES
+                        - TAX_PAYMENT
+                date:
+                    type: string
+                    format: date-time
+                    description: Date and time in ISO 8601 format
+                    example: '2024-02-22T17:29:39Z'
+                amount:
+                    type: integer
+                    example: 2900
+                    description: Amount in pennies
+        SaleAmendItem:
+            required:
+                - date
+                - invoiceId
+                - itemId
+                - cost
+                - taxRate
+            properties:
+                date:
+                    type: string
+                    format: date-time
+                    description: Date and time in ISO 8601 format
+                    example: '2024-02-22T17:29:39Z'
+                invoiceId:
+                    type: string
+                    example: '3419027d-960f-4e8f-b8b7-f7b2b4791824'
+                itemId:
+                    type: string
+                    example: '02db47b6-fe68-4005-a827-24c6e962f3df'
+                cost:
+                    type: integer
+                    example: 2900
+                    description: Amount in pennies
+                taxRate:
+                    type: number
+                    format: double
+                    example: 19.99
+        TaxPosition:
+            required:
+                - date
+                - taxPosition
+            properties:
+                date:
+                    type: string
+                    format: date-time
+                    description: Date and time in ISO 8601 format
+                    example: '2024-02-22T17:29:39Z'
+                taxPosition:
+                    type: integer
+                    example: 2399
+                    description: Amount in pennies
+        Error:
+            required:
+                - message
+            properties:
+                message:
+                    type: string
+                    example: Invalid value
