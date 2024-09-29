@@ -8,8 +8,6 @@ import {
     numeric,
 } from 'drizzle-orm/pg-core';
 
-import { relations } from 'drizzle-orm';
-
 export const saleEvents = pgTable(
     'sale_events',
     {
@@ -24,10 +22,6 @@ export const saleEvents = pgTable(
         };
     }
 );
-
-export const saleEventsRelations = relations(saleEvents, ({ many }) => ({
-    items: many(saleItems),
-}));
 
 export const saleItems = pgTable(
     'sale_items',
@@ -51,11 +45,7 @@ export const saleItems = pgTable(
     }
 );
 
-export const saleItemsRelations = relations(saleItems, ({ one }) => ({
-    saleEvent: one(saleEvents),
-}));
-
-export const taxPaymentEvents = pgTable('tax_payment_events', {
+export const taxPayments = pgTable('tax_payment_events', {
     id: serial('id').primaryKey(),
     eventDate: timestamp('event_date', { mode: 'string' }).notNull(),
     amount: integer('amount').notNull(),

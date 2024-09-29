@@ -11,7 +11,13 @@ export const calculateTax = (costInPennies: number, taxRate: string) => {
     const tax = cost.mul(taxRate);
 
     // Convert to integer pennies (rounding up to the nearest penny by default)
-    return tax.toDecimalPlaces(0).toNumber();
+    return tax.toDP(0).toNumber();
+};
+
+export const getTotalTaxFromQuery = (result: { value: string | null }[]) => {
+    const value = result[0]?.value;
+    // Convert string into integer (amount in pennies)
+    return value ? new Decimal(value).toDP(0).toNumber() : 0;
 };
 
 export const applyAmendmentsToSales = (

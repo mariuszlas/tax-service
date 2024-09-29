@@ -1,11 +1,13 @@
 {
-    "name": "novabook-tax-service",
+    "name": "tax-service",
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
         "build": "tsc -b",
-        "dev": "nodemon index.ts",
+        "dev": "APP_ENV=test nodemon index.ts",
         "start": "npm run build && node dist/index.js",
+        "start:test": "APP_ENV=test npm start",
+        "start:prod": "APP_ENV=prod npm start",
         "test": "jest",
         "ts:check": "tsc --noEmit",
         "format:check": "prettier --check .",
@@ -14,7 +16,8 @@
         "lint:fix": "eslint --fix .",
         "prepare": "husky",
         "generate-migration": "npx drizzle-kit generate",
-        "migrate": "npx drizzle-kit migrate"
+        "migrate": "npx drizzle-kit migrate",
+        "drizzle-studio": "APP_ENV=test npx drizzle-kit studio"
     },
     "author": "Mariusz Las",
     "license": "MIT",

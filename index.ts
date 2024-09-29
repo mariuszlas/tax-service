@@ -1,10 +1,15 @@
 import express from 'express';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import YAML from 'yamljs';
 import swaggerUi from 'swagger-ui-express';
 import * as OpenApiValidator from 'express-openapi-validator';
+import * as dotenv from 'dotenv';
 import path from 'path';
 import bodyParser from 'body-parser';
+
+dotenv.config({ path: path.resolve('envs', `${process.env.APP_ENV}.env`) });
+
+const PORT = process.env.PORT;
 
 const app = express();
 
@@ -28,14 +33,12 @@ app.use(
     })
 );
 
-app.use((err, req: Request, res: Response, _) => {
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((err, req, res: Response, next) => {
     const statusCode = err?.statusCode || err?.status || 500;
-
-    res.status(statusCode).json({
-        message: err?.message,
-    });
+    res.status(statusCode).json({ message: err?.message });
 });
 
-app.listen(3000, () => {
-    console.log('Service is running on port 3000');
+app.listen(Number(PORT), () => {
+    console.log(`Service is running on port ${PORT}`);
 });

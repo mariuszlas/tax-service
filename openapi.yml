@@ -33,7 +33,7 @@ paths:
 
     /transactions:
         post:
-            summary: Add Sales or Tax Event
+            summary: Add Sales or Tax Payment
             description: Allows to send sales and tax payment transactions
             tags:
                 - Transactions Controller
@@ -47,6 +47,11 @@ paths:
                             oneOf:
                                 - $ref: '#/components/schemas/TaxTransaction'
                                 - $ref: '#/components/schemas/SaleTransaction'
+                        examples:
+                            sale:
+                                $ref: '#/components/schemas/SaleTransaction'
+                            tax:
+                                $ref: '#/components/schemas/TaxTransaction'
             responses:
                 '202':
                     description: Transaction accepted
@@ -151,12 +156,14 @@ components:
                     example: '02db47b6-fe68-4005-a827-24c6e962f3df'
                 cost:
                     type: integer
+                    minimum: 0
                     example: 2900
                     description: Amount in pennies
                 taxRate:
                     type: number
+                    minimum: 0
                     format: double
-                    example: 19.99
+                    example: 0.2
         TaxTransaction:
             required:
                 - eventType
@@ -176,6 +183,7 @@ components:
                     example: '2024-02-22T17:29:39Z'
                 amount:
                     type: integer
+                    minimum: 0
                     example: 2900
                     description: Amount in pennies
         SaleAmendItem:
@@ -200,11 +208,13 @@ components:
                 cost:
                     type: integer
                     example: 2900
+                    minimum: 0
                     description: Amount in pennies
                 taxRate:
                     type: number
+                    minimum: 0
                     format: double
-                    example: 19.99
+                    example: 0.2
         TaxPosition:
             required:
                 - date
@@ -226,3 +236,5 @@ components:
                 message:
                     type: string
                     example: Invalid value
+                stackTrace:
+                    type: string

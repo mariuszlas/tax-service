@@ -1,12 +1,12 @@
 import { Response, Request } from 'express';
 
 import {
-    amendSaleItem,
-    createAmendment,
+    updateSaleItemAndSaleAmendment,
     createSaleItemAndSaleAmendment,
-    getSaleByInvoiceId,
     getSaleItemByItemIdForSaleEvent,
-} from '../../db/services';
+} from '../../services/saleItem';
+import { getSaleByInvoiceId } from '../../services/saleEvent';
+import { createSaleAmendment } from '../../services/saleAmendment';
 
 export async function sale(req: Request, res: Response) {
     try {
@@ -19,14 +19,18 @@ export async function sale(req: Request, res: Response) {
 
             if (item) {
                 // Update the existing sale item and create new sale amendment
-                await amendSaleItem(sale.id, item.itemId, req.body);
+                await updateSaleItemAndSaleAmendment(
+                    sale.id,
+                    item.itemId,
+                    req.body
+                );
             } else {
                 // Create new sale item and a new sale amendment
                 await createSaleItemAndSaleAmendment(sale.id, req.body);
             }
         } else {
             // Create a new amendment only
-            await createAmendment({
+            await createSaleAmendment({
                 invoiceId,
                 itemId,
                 amendmentDate: date,

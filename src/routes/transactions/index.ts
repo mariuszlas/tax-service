@@ -1,10 +1,7 @@
 import { Response, Request } from 'express';
 
-import {
-    createSale,
-    createTaxPayment,
-    getSaleByInvoiceId,
-} from '../../db/services';
+import { createTaxPayment } from '../../services/taxPayment';
+import { createSale, getSaleByInvoiceId } from '../../services/saleEvent';
 
 enum SaleEventType {
     SALES = 'SALES',
