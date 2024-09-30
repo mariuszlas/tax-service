@@ -139,6 +139,8 @@ components:
                     example: '2024-02-22T17:29:39Z'
                 invoiceId:
                     type: string
+                    format: uuid
+                    description: UUID of the invoice
                     example: '3419027d-960f-4e8f-b8b7-f7b2b4791824'
                 items:
                     type: array
@@ -153,6 +155,8 @@ components:
             properties:
                 itemId:
                     type: string
+                    format: uuid
+                    description: UUID of the item
                     example: '02db47b6-fe68-4005-a827-24c6e962f3df'
                 cost:
                     type: integer
@@ -201,9 +205,13 @@ components:
                     example: '2024-02-22T17:29:39Z'
                 invoiceId:
                     type: string
+                    format: uuid
+                    description: UUID of the invoice
                     example: '3419027d-960f-4e8f-b8b7-f7b2b4791824'
                 itemId:
                     type: string
+                    format: uuid
+                    description: UUID of the item
                     example: '02db47b6-fe68-4005-a827-24c6e962f3df'
                 cost:
                     type: integer

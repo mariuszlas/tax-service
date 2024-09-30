@@ -1,5 +1,5 @@
 {
-    "id": "ad37c8d1-53cb-4673-8657-671dcb47ff5a",
+    "id": "5f20b5d4-92ba-476e-a303-ad904cb81657",
     "prevId": "00000000-0000-0000-0000-000000000000",
     "version": "7",
     "dialect": "postgresql",
@@ -26,20 +26,20 @@
                     "primaryKey": false,
                     "notNull": true
                 },
-                "amended_cost": {
-                    "name": "amended_cost",
+                "cost": {
+                    "name": "cost",
                     "type": "integer",
                     "primaryKey": false,
                     "notNull": true
                 },
-                "amended_tax_rate": {
-                    "name": "amended_tax_rate",
+                "tax_rate": {
+                    "name": "tax_rate",
                     "type": "numeric",
                     "primaryKey": false,
                     "notNull": true
                 },
-                "amendment_date": {
-                    "name": "amendment_date",
+                "date": {
+                    "name": "date",
                     "type": "timestamp",
                     "primaryKey": false,
                     "notNull": true
@@ -52,7 +52,23 @@
                     "default": "now()"
                 }
             },
-            "indexes": {},
+            "indexes": {
+                "sale_amendments_date_idx": {
+                    "name": "sale_amendments_date_idx",
+                    "columns": [
+                        {
+                            "expression": "date",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": false,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
             "foreignKeys": {},
             "compositePrimaryKeys": {},
             "uniqueConstraints": {}
@@ -73,8 +89,8 @@
                     "primaryKey": false,
                     "notNull": true
                 },
-                "event_date": {
-                    "name": "event_date",
+                "date": {
+                    "name": "date",
                     "type": "timestamp",
                     "primaryKey": false,
                     "notNull": true
@@ -99,6 +115,21 @@
                         }
                     ],
                     "isUnique": true,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                },
+                "sale_events_date_idx": {
+                    "name": "sale_events_date_idx",
+                    "columns": [
+                        {
+                            "expression": "date",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": false,
                     "concurrently": false,
                     "method": "btree",
                     "with": {}
@@ -193,8 +224,8 @@
             "compositePrimaryKeys": {},
             "uniqueConstraints": {}
         },
-        "public.tax_payment_events": {
-            "name": "tax_payment_events",
+        "public.tax_payments": {
+            "name": "tax_payments",
             "schema": "",
             "columns": {
                 "id": {
@@ -203,8 +234,8 @@
                     "primaryKey": true,
                     "notNull": true
                 },
-                "event_date": {
-                    "name": "event_date",
+                "date": {
+                    "name": "date",
                     "type": "timestamp",
                     "primaryKey": false,
                     "notNull": true
@@ -223,7 +254,23 @@
                     "default": "now()"
                 }
             },
-            "indexes": {},
+            "indexes": {
+                "tax_payments_date_idx": {
+                    "name": "tax_payments_date_idx",
+                    "columns": [
+                        {
+                            "expression": "date",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": false,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
             "foreignKeys": {},
             "compositePrimaryKeys": {},
             "uniqueConstraints": {}

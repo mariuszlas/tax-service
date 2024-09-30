@@ -1,7 +1,8 @@
 import Decimal from 'decimal.js';
 import { SaleAmendment, SaleItem } from '../../db/types';
 
-type SaleItems = Map<string, Pick<SaleItem, 'cost' | 'taxRate'>>;
+export type SaleItems = Map<string, Pick<SaleItem, 'cost' | 'taxRate'>>;
+export type PartialSaleItem = Omit<SaleItem, 'createdAt' | 'id'>;
 
 // Calculate tax for an item, returning tax in pennies (as integer)
 export const calculateTax = (costInPennies: number, taxRate: string) => {
@@ -21,7 +22,7 @@ export const getTotalTaxFromQuery = (result: { value: string | null }[]) => {
 };
 
 export const applyAmendmentsToSales = (
-    salesItemsUpToDate: Omit<SaleItem, 'createdAt' | 'id'>[],
+    salesItemsUpToDate: PartialSaleItem[],
     amendmentsUpToDate: SaleAmendment[]
 ) => {
     const saleItems: SaleItems = new Map();
@@ -34,13 +35,15 @@ export const applyAmendmentsToSales = (
         })
     );
 
-    // Apply amendments (most recent amendments will overwrite earlier ones because amendments are sorted)
+    // Apply amendments (most recent amendments will overwrite
+    // earlier ones because amendments are sorted)
     amendmentsUpToDate.forEach(amendment => {
         if (saleItems.has(amendment.itemId)) {
-            // if there is an amendment for a given sale item, overwrite the item's cost and tax rate with the amended ones
+            // if there is an amendment for a given sale item,
+            // overwrite the item's cost and tax rate with the amended ones
             saleItems.set(amendment.itemId, {
-                cost: amendment.amendedCost,
-                taxRate: amendment.amendedTaxRate,
+                cost: amendment.cost,
+                taxRate: amendment.taxRate,
             });
         }
     });

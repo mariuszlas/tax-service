@@ -10,4 +10,4 @@ export const getTotalTaxPaymentsUpToDate = async (date: string) =>
     await db
         .select({ value: sum(taxPayments.amount) })
         .from(taxPayments)
-        .where(lte(taxPayments.eventDate, date));
+        .where(lte(taxPayments.date, date));

@@ -2,15 +2,8 @@ import { eq, and, lte } from 'drizzle-orm';
 
 import { saleAmendments, saleEvents, saleItems } from '../db/schema';
 
+import { NewSaleAmendment } from '../db/types';
 import { db } from '../db';
-
-interface TRequestBody {
-    itemId: string;
-    cost: number;
-    taxRate: number;
-    date: string;
-    invoiceId: string;
-}
 
 export const getSaleItemByItemIdForSaleEvent = async (
     itemId: string,
@@ -33,52 +26,42 @@ export const getSaleItemsUpToDate = (date: string) => {
         })
         .from(saleItems)
         .leftJoin(saleEvents, eq(saleItems.saleEventId, saleEvents.id))
-        .where(lte(saleEvents.eventDate, date));
+        .where(lte(saleEvents.date, date));
 };
 
-export const updateSaleItemAndSaleAmendment = async (
+export const createOrUpdateSaleItemAndCreateSaleAmendment = async (
     saleEventId: number,
-    itemId: string,
-    { cost, taxRate, date, invoiceId }: TRequestBody
+    { cost, taxRate, date, invoiceId, itemId }: NewSaleAmendment,
+    existingItemId?: string
 ) =>
     await db.transaction(async tx => {
-        // Update sale item for a given sale with new cost and tax rate
-        await tx
-            .update(saleItems)
-            .set({ cost, taxRate: taxRate.toString() })
-            .where(
-                and(
-                    eq(saleItems.saleEventId, saleEventId),
-                    eq(saleItems.itemId, itemId)
-                )
-            );
+        if (existingItemId) {
+            // Update sale item for a given sale with new cost and tax rate
+            await tx
+                .update(saleItems)
+                .set({ cost, taxRate: taxRate.toString() })
+                .where(
+                    and(
+                        eq(saleItems.saleEventId, saleEventId),
+                        eq(saleItems.itemId, existingItemId)
+                    )
+                );
+        } else {
+            // Create new sale item for a given sale
+            await tx.insert(saleItems).values({
+                saleEventId,
+                itemId,
+                cost,
+                taxRate: taxRate.toString(),
+            });
+        }
 
         // Add new sale amendment event
         await tx.insert(saleAmendments).values({
             invoiceId,
-            itemId,
-            amendmentDate: date,
-            amendedCost: cost,
-            amendedTaxRate: taxRate.toString(),
-        });
-    });
-
-export const createSaleItemAndSaleAmendment = async (
-    saleEventId: number,
-    { itemId, cost, taxRate, date, invoiceId }: TRequestBody
-) =>
-    await db.transaction(async tx => {
-        // Create new sale item for a given sale
-        await tx
-            .insert(saleItems)
-            .values({ saleEventId, itemId, cost, taxRate: taxRate.toString() });
-
-        // Add new sale amendment event
-        await tx.insert(saleAmendments).values({
-            invoiceId,
-            itemId,
-            amendmentDate: date,
-            amendedCost: cost,
-            amendedTaxRate: taxRate.toString(),
+            itemId: existingItemId || itemId,
+            date,
+            cost,
+            taxRate: taxRate.toString(),
         });
     });
