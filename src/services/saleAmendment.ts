@@ -10,5 +10,5 @@ export const getSaleAmendmentsUpToDate = async (date: string) =>
     await db
         .select()
         .from(saleAmendments)
-        .where(lte(saleAmendments.amendmentDate, date))
-        .orderBy(desc(saleAmendments.amendmentDate));
+        .where(lte(saleAmendments.date, date))
+        .orderBy(desc(saleAmendments.date));

@@ -6,6 +6,7 @@ import * as OpenApiValidator from 'express-openapi-validator';
 import * as dotenv from 'dotenv';
 import path from 'path';
 import bodyParser from 'body-parser';
+import { httpLogger, logError } from './src/middleware/logger';
 
 dotenv.config({ path: path.resolve('envs', `${process.env.APP_ENV}.env`) });
 
@@ -16,7 +17,7 @@ const app = express();
 const swaggerDocument = YAML.load('./openapi.yml');
 const apiSpec = path.join('./openapi.yml');
 
-app.use(bodyParser.json());
+app.use(bodyParser.json(), httpLogger);
 
 app.get('/', (_, res) => {
     res.json({ message: 'ok' });
@@ -35,6 +36,7 @@ app.use(
 
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err, req, res: Response, next) => {
+    logError(err?.message);
     const statusCode = err?.statusCode || err?.status || 500;
     res.status(statusCode).json({ message: err?.message });
 });

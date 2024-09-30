@@ -10,6 +10,7 @@ import {
 
 import { getTotalTaxPaymentsUpToDate } from '../../services/taxPayment';
 import { getSaleAmendmentsUpToDate } from '../../services/saleAmendment';
+import { logError } from '../../middleware/logger';
 
 export async function taxPosition(req: Request, res: Response) {
     try {
@@ -24,7 +25,7 @@ export async function taxPosition(req: Request, res: Response) {
 
         // Apply amendments to sales
         const updatedSales = applyAmendmentsToSales(saleItems, saleAmendments);
-        //  Calculate total tax from amended sales (in pennies)
+        // Calculate total tax from amended sales (in pennies)
         const totalTaxFromSales = calculateTotalTax(updatedSales);
         // Get total tax value from the query result (in pennies)
         const totalTaxPayments = getTotalTaxFromQuery(totalTaxPaymentsResult);
@@ -32,7 +33,8 @@ export async function taxPosition(req: Request, res: Response) {
         const taxPosition = totalTaxFromSales - totalTaxPayments;
 
         res.status(200).json({ date, taxPosition });
-    } catch {
+    } catch (e) {
+        logError(String(e));
         res.status(500).json({ message: 'Unexpected error occurred' });
     }
 }

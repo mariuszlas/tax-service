@@ -6,6 +6,7 @@ import {
     uniqueIndex,
     uuid,
     numeric,
+    index,
 } from 'drizzle-orm/pg-core';
 
 export const saleEvents = pgTable(
@@ -13,14 +14,13 @@ export const saleEvents = pgTable(
     {
         id: serial('id').primaryKey(),
         invoiceId: uuid('invoice_id').notNull().unique(),
-        eventDate: timestamp('event_date', { mode: 'string' }).notNull(),
+        date: timestamp('date', { mode: 'string' }).notNull(),
         createdAt: timestamp('created_at').defaultNow().notNull(),
     },
-    table => {
-        return {
-            invoiceIdIdx: uniqueIndex('invoice_id_idx').on(table.invoiceId),
-        };
-    }
+    table => ({
+        invoiceIdIdx: uniqueIndex('invoice_id_idx').on(table.invoiceId),
+        dateIdx: index('sale_events_date_idx').on(table.date),
+    })
 );
 
 export const saleItems = pgTable(
@@ -35,29 +35,39 @@ export const saleItems = pgTable(
         taxRate: numeric('tax_rate').notNull(),
         createdAt: timestamp('created_at').defaultNow().notNull(),
     },
-    table => {
-        return {
-            salesIdAndItemIdIdx: uniqueIndex('sales_id_item_id_idx').on(
-                table.saleEventId,
-                table.itemId
-            ),
-        };
-    }
+    table => ({
+        salesIdAndItemIdIdx: uniqueIndex('sales_id_item_id_idx').on(
+            table.saleEventId,
+            table.itemId
+        ),
+    })
 );
 
-export const taxPayments = pgTable('tax_payment_events', {
-    id: serial('id').primaryKey(),
-    eventDate: timestamp('event_date', { mode: 'string' }).notNull(),
-    amount: integer('amount').notNull(),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+export const taxPayments = pgTable(
+    'tax_payments',
+    {
+        id: serial('id').primaryKey(),
+        date: timestamp('date', { mode: 'string' }).notNull(),
+        amount: integer('amount').notNull(),
+        createdAt: timestamp('created_at').defaultNow().notNull(),
+    },
+    table => ({
+        dateIdx: index('tax_payments_date_idx').on(table.date),
+    })
+);
 
-export const saleAmendments = pgTable('sale_amendments', {
-    id: serial('id').primaryKey(),
-    invoiceId: uuid('invoice_id').notNull(),
-    itemId: uuid('item_id').notNull(),
-    amendedCost: integer('amended_cost').notNull(),
-    amendedTaxRate: numeric('amended_tax_rate').notNull(),
-    amendmentDate: timestamp('amendment_date', { mode: 'string' }).notNull(),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+export const saleAmendments = pgTable(
+    'sale_amendments',
+    {
+        id: serial('id').primaryKey(),
+        invoiceId: uuid('invoice_id').notNull(),
+        itemId: uuid('item_id').notNull(),
+        cost: integer('cost').notNull(),
+        taxRate: numeric('tax_rate').notNull(),
+        date: timestamp('date', { mode: 'string' }).notNull(),
+        createdAt: timestamp('created_at').defaultNow().notNull(),
+    },
+    table => ({
+        dateIdx: index('sale_amendments_date_idx').on(table.date),
+    })
+);
