@@ -4,7 +4,7 @@ Table of Contents
 
 -   [Overview](#overview)
 -   [Endpoints](#endpoints)
--   [Local Development](#local-dvelopment)
+-   [Local Development](#local-development)
 -   [Design](#design)
 -   [Future Considerations](#future-considerations)
 
@@ -60,10 +60,12 @@ The architecture splits the responsibilities between the database layer and the 
 
 I chose a relational database (PostgreSQL) due to the structured nature of the data and the need for atomic transactions and data integrity. Data is modeled into 4 tables:
 
--   Sale Events - invoices with a unique invoice id submitted in the `/transactions` enpoint.
--   Sale Items - stores items that are submitted in a sale event. It references invoice id and has must have a unique composite index which is a combination of item id and invoice id so that an invoice cannot have multiple items with the same id.
--   Tax Payments - stores tax payment events.
--   Sale Amendments - stores any amendments made to sale items. If an item's cost or tax rate is amended, this table logs the changes. Tracking these changes separately allows reconstructing the tax position accurately at any point in time.
+-   **Sale Events** - invoices with a unique invoice id submitted in the `/transactions` enpoint.
+-   **Sale Items** - stores items that are submitted in a sale event. It references invoice id and has must have a unique composite index which is a combination of item id and invoice id so that an invoice cannot have multiple items with the same id.
+-   **Tax Payments** - stores tax payment events.
+-   **Sale Amendments** - stores any amendments made to sale items. If an item's cost or tax rate is amended, this table logs the changes. Tracking these changes separately allows reconstructing the tax position accurately at any point in time.
+
+<img src="https://github.com/user-attachments/assets/f3acee8b-f8e3-449b-844c-66525a26dd70" width="1050" />
 
 ### Amendments Handling
 
