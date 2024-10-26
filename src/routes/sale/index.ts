@@ -39,7 +39,7 @@ export async function sale(req: Request, res: Response) {
 
         res.status(202).send();
     } catch (e) {
-        logError(String(e), { invoiceId, itemId });
+        logError(req, String(e), { invoiceId, itemId });
         res.status(500).json({ message: 'Unexpected error occurred' });
     }
 }

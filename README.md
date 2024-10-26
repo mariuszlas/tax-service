@@ -42,6 +42,10 @@ The service is currently deployed to [here](https://tax-service.up.railway.app) 
 
 Unit tests can be run with `npm test`, which also includes coverage report
 
+### Docker Image
+
+The Docker image of the service can be built with `docker build . -t tax-service-api` and run with `docker run --rm --name tax-service-app --publish 3000:3000 tax-service-ap`
+
 ### Databse Browser
 
 Since the project uses Drizzle ORM, the Drizzle Studio can be used to view and interact with the database. Run `npm run drizzle-studio` in a separte terminal and visit `https://local.drizzle.studio` in your web browser.

@@ -1,3 +1,5 @@
+import { Request } from 'express';
+import { IncomingMessage } from 'http';
 import pino from 'pino';
 import { HttpLogger, Options, pinoHttp } from 'pino-http';
 
@@ -8,41 +10,33 @@ const logger = pino({
     timestamp: pino.stdTimeFunctions.isoTime,
 });
 
-export const logWarn = (message: string, attributes = {}) => {
-    logger.warn(attributes, message);
+const getRequestId = (req: Request | IncomingMessage) =>
+    req?.id ||
+    req.headers['x-railway-request-id'] ||
+    req.headers['x-request-id'];
+
+export const logWarn = (req: Request, message: string, attributes = {}) => {
+    logger.warn({ id: getRequestId(req), ...attributes }, message);
 };
 
-export const logError = (message: string, attributes = {}) => {
-    logger.error(attributes, message);
+export const logError = (req: Request, message: string, attributes = {}) => {
+    logger.error({ id: getRequestId(req), attributes }, message);
 };
 
-enum LogLevel {
-    INFO = 'info',
-    WARN = 'warn',
-    ERROR = 'error',
-    SILENT = 'silent',
-}
+export const logInfo = (message: string, attributes = {}) => {
+    logger.info(attributes, message);
+};
 
 const httpLoggerOptions: Options = {
-    name: 'tax-service',
-    base: null,
-    customLogLevel: (req, res, err) => {
-        if (res.statusCode >= 400 && res.statusCode < 500) {
-            return LogLevel.WARN;
-        } else if (res.statusCode >= 500 || err) {
-            return LogLevel.ERROR;
-        } else if (res.statusCode >= 300 && res.statusCode < 400) {
-            return LogLevel.SILENT;
-        }
-        return LogLevel.INFO;
-    },
-    transport: {
-        target: 'pino-http-print',
-        options: {
-            destination: 1,
-            all: true,
-            translateTime: true,
-        },
+    logger: logger,
+    genReqId: (req, res) => {
+        const existingId = getRequestId(req);
+
+        if (existingId) return existingId;
+
+        const id = crypto.randomUUID();
+        res.setHeader('X-Request-Id', id);
+        return id;
     },
 };
 

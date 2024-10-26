@@ -6,7 +6,12 @@ import * as OpenApiValidator from 'express-openapi-validator';
 import * as dotenv from 'dotenv';
 import path from 'path';
 import bodyParser from 'body-parser';
-import { httpLogger, logError } from './src/middleware/logger';
+import {
+    httpLogger,
+    logError,
+    logInfo,
+    logWarn,
+} from './src/middleware/logger';
 
 dotenv.config({ path: path.resolve('envs', `${process.env.APP_ENV}.env`) });
 
@@ -36,11 +41,21 @@ app.use(
 
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err, req, res: Response, next) => {
-    logError(err?.message);
     const statusCode = err?.statusCode || err?.status || 500;
-    res.status(statusCode).json({ message: err?.message });
+
+    if (statusCode < 500) {
+        logWarn(req, err?.message);
+    } else {
+        logError(req, err?.message);
+    }
+
+    res.status(statusCode).json({
+        status: 'error',
+        code: statusCode,
+        message: err?.message,
+    });
 });
 
 app.listen(Number(PORT), () => {
-    console.log(`Service is running on port ${PORT}`);
+    logInfo(`Service is running on port ${PORT}`);
 });
