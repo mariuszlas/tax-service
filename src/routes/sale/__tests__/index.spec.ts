@@ -94,7 +94,7 @@ describe('sale', () => {
 
         await sale(req, res);
 
-        expect(logError).toHaveBeenCalledWith('Error: Unexpected error', {
+        expect(logError).toHaveBeenCalledWith(req, 'Error: Unexpected error', {
             invoiceId: 'invoice-123',
             itemId: '123',
         });

@@ -41,7 +41,10 @@ describe('transactions', () => {
         await transactions(mockRequest, mockResponse);
 
         expect(getSaleByInvoiceId).toHaveBeenCalledWith('invoice1');
-        expect(logWarn).toHaveBeenCalledWith("Sale 'invoice1' already exists");
+        expect(logWarn).toHaveBeenCalledWith(
+            mockRequest,
+            "Sale 'invoice1' already exists"
+        );
         expect(mockStatus).toHaveBeenCalledWith(400);
         expect(mockJson).toHaveBeenCalledWith({
             message: "Sale 'invoice1' already exists",
@@ -67,6 +70,7 @@ describe('transactions', () => {
             mockRequest.body.items
         );
         expect(logWarn).toHaveBeenCalledWith(
+            mockRequest,
             'Sale items must have unique itemIds: item1'
         );
         expect(mockStatus).toHaveBeenCalledWith(400);
@@ -140,10 +144,14 @@ describe('transactions', () => {
         await transactions(mockRequest, mockResponse);
 
         expect(getSaleByInvoiceId).toHaveBeenCalledWith('invoice4');
-        expect(logError).toHaveBeenCalledWith('Error: Unexpected error', {
-            invoiceId: 'invoice4',
-            eventType: SaleEventType.SALES,
-        });
+        expect(logError).toHaveBeenCalledWith(
+            mockRequest,
+            'Error: Unexpected error',
+            {
+                invoiceId: 'invoice4',
+                eventType: SaleEventType.SALES,
+            }
+        );
         expect(mockStatus).toHaveBeenCalledWith(500);
         expect(mockJson).toHaveBeenCalledWith({
             message: 'Unexpected error occurred',

@@ -244,5 +244,9 @@ components:
                 message:
                     type: string
                     example: Invalid value
-                stackTrace:
+                status:
                     type: string
+                code:
+                    type: number
+                    example: 400
+                    description: HTTP status code

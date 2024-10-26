@@ -94,7 +94,10 @@ describe('taxPosition', () => {
         expect(getSaleItemsUpToDate).toHaveBeenCalledWith(
             '2024-02-22T17:29:39Z'
         );
-        expect(logError).toHaveBeenCalledWith('Error: Something went wrong');
+        expect(logError).toHaveBeenCalledWith(
+            mockRequest,
+            'Error: Something went wrong'
+        );
         expect(mockStatus).toHaveBeenCalledWith(500);
         expect(mockJson).toHaveBeenCalledWith({
             message: 'Unexpected error occurred',

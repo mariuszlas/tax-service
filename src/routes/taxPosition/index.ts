@@ -34,7 +34,7 @@ export async function taxPosition(req: Request, res: Response) {
 
         res.status(200).json({ date, taxPosition });
     } catch (e) {
-        logError(String(e));
+        logError(req, String(e));
         res.status(500).json({ message: 'Unexpected error occurred' });
     }
 }

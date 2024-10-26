@@ -21,7 +21,7 @@ export async function transactions(req: Request, res: Response) {
             // Return error if sale event with a given id already exists
             if (sale) {
                 const message = `Sale '${invoiceId}' already exists`;
-                logWarn(message);
+                logWarn(req, message);
                 res.status(400).json({ message });
                 return;
             }
@@ -31,7 +31,7 @@ export async function transactions(req: Request, res: Response) {
             // Return error if sale event contains items with same itemId
             if (nonUniqueItemIds.length > 0) {
                 const message = `Sale items must have unique itemIds: ${nonUniqueItemIds.toString()}`;
-                logWarn(message);
+                logWarn(req, message);
                 res.status(400).json({ message });
                 return;
             }
@@ -47,7 +47,7 @@ export async function transactions(req: Request, res: Response) {
 
         res.status(202).send();
     } catch (e) {
-        logError(String(e), { invoiceId, eventType });
+        logError(req, String(e), { invoiceId, eventType });
         res.status(500).json({ message: 'Unexpected error occurred' });
     }
 }

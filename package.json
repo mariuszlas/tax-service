@@ -14,7 +14,7 @@
         "format:write": "prettier --write .",
         "lint:check": "eslint .",
         "lint:fix": "eslint --fix .",
-        "prepare": "husky",
+        "prepare": "husky || true",
         "generate-migration": "npx drizzle-kit generate",
         "migrate": "APP_ENV=test npx drizzle-kit migrate",
         "drizzle-studio": "APP_ENV=test npx drizzle-kit studio"
